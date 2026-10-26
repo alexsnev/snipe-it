@@ -53,4 +53,5 @@ return [
     'print_asset_sheet' => 'Print Asset Sheet',
     'audit_history' => 'Audit History',
     'maintenance_history' => 'Maintenance History',
+    'maintenance_to_do' => 'Maintenance To Do',
 ];

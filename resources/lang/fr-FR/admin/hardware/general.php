@@ -53,4 +53,5 @@ return [
     'print_asset_sheet' => 'Imprimer fiche actif',
     'audit_history' => 'Historique des audits',
     'maintenance_history' => 'Historique des maintenances',
+    'maintenance_to_do' => 'Opérations de maintenance à effectuer',
 ];

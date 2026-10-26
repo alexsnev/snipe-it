@@ -8,6 +8,7 @@ use App\Models\AssetModel;
 use App\Models\CustomField;
 use App\Models\CustomFieldset;
 use App\Models\Maintenance;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Facades\Crypt;
 use Tests\TestCase;
@@ -23,7 +24,10 @@ class PrintAssetSheetTest extends TestCase
 
     public function test_page_renders()
     {
-        $asset = Asset::factory()->create(['name' => 'SHEET-ASSET-NAME']);
+        $asset = Asset::factory()->create([
+            'name' => 'SHEET-ASSET-NAME',
+            'supplier_id' => Supplier::factory()->create(['name' => 'SHEET-SUPPLIER-NAME'])->id,
+        ]);
 
         $this->actingAs(User::factory()->viewAssets()->create())
             ->get(route('hardware.print', $asset))
@@ -31,7 +35,8 @@ class PrintAssetSheetTest extends TestCase
             ->assertSeeText($asset->asset_tag)
             ->assertSeeText('SHEET-ASSET-NAME')
             ->assertSeeText($asset->model->name)
-            ->assertSeeText($asset->model->category->name);
+            ->assertSeeText($asset->model->category->name)
+            ->assertSeeText('SHEET-SUPPLIER-NAME');
     }
 
     public function test_sheet_lists_audit_and_maintenance_history()

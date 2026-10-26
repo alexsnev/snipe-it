@@ -789,7 +789,17 @@ class AssetsController extends Controller
     {
         $this->authorize('view', $asset);
 
-        $asset->loadMissing(['model.category', 'model.fieldset.fields', 'maintenances.maintenanceType', 'maintenances.supplier']);
+        $asset->loadMissing([
+            'status',
+            'location',
+            'defaultLoc',
+            'supplier',
+            'model.category',
+            'model.manufacturer',
+            'model.fieldset.fields',
+            'maintenances.maintenanceType',
+            'maintenances.supplier',
+        ]);
 
         $customFields = $asset->model?->fieldset?->fields ?? collect();
 

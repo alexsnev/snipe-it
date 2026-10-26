@@ -397,7 +397,7 @@ return [
     'show_current' => 'Afficher l\'actuel',
     'sign_in' => 'Connexion',
     'signature' => 'Signature',
-    'signed_off_by' => 'Déconnecté par',
+    'signed_off_by' => 'Visa',
     'skin' => 'Habillage',
     'integration_settings' => 'Option d\'intégration',
     'integration_settings_help' => 'Configurer les paramètres du webhook pour cette entreprise.',

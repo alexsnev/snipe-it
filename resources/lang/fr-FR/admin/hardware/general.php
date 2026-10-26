@@ -49,4 +49,8 @@ return [
     'custom_export' => 'Exportation personnalisée',
     'mfg_warranty_lookup' => 'Vérification de la garantie :manufacturer',
     'user_department' => 'Département de l\'utilisateur·trice',
+    'asset_sheet' => 'Fiche actif',
+    'print_asset_sheet' => 'Imprimer fiche actif',
+    'audit_history' => 'Historique des audits',
+    'maintenance_history' => 'Historique des maintenances',
 ];

@@ -782,6 +782,25 @@ class AssetsController extends Controller
     }
 
     /**
+     * Return a printable A4 sheet for an individual asset, with its audit
+     * custom fields and its audit and maintenance history.
+     */
+    public function printSheet(Asset $asset): View
+    {
+        $this->authorize('view', $asset);
+
+        $asset->loadMissing(['model.category', 'model.fieldset.fields', 'maintenances.maintenanceType', 'maintenances.supplier']);
+
+        $customFields = $asset->model?->fieldset?->fields ?? collect();
+
+        return view('hardware/print')
+            ->with('asset', $asset)
+            ->with('customFields', $customFields)
+            ->with('auditFields', $customFields->where('display_audit', '1'))
+            ->with('audits', $asset->audits()->with(['adminuser', 'location'])->get());
+    }
+
+    /**
      * Returns a view that presents a form to clone an asset.
      *
      * @author [A. Gianotto] [<snipe@snipe.net>]

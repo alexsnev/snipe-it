@@ -49,4 +49,8 @@ return [
     'custom_export' => 'Custom Export',
     'mfg_warranty_lookup' => ':manufacturer Warranty Status Lookup',
     'user_department' => 'User Department',
+    'asset_sheet' => 'Asset Sheet',
+    'print_asset_sheet' => 'Print Asset Sheet',
+    'audit_history' => 'Audit History',
+    'maintenance_history' => 'Maintenance History',
 ];

@@ -497,6 +497,11 @@
                         <x-button.note :item="$asset" :route="route('clone/hardware', $asset->id)"/>
                         <x-button.audit :item="$asset" :route="route('asset.audit.create', $asset->id)"/>
                         <x-button.label :item="$asset" :route="route('hardware.bulkedit.show')"/>
+                        @if ($asset->deleted_at=='')
+                            <a href="{{ route('hardware.print', $asset->id) }}" class="btn btn-sm btn-default hidden-print" target="_blank" rel="noopener" data-tooltip="true" title="{{ trans('admin/hardware/general.print_asset_sheet') }}">
+                                <x-icon type="print" class="fa-fw"/>
+                            </a>
+                        @endif
                         <x-button.delete :item="$asset"/>
                         <x-button.restore :item="$asset" :route="route('restore/hardware', ['asset' => $asset->id])"/>
                     </x-slot:buttons>

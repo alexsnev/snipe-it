@@ -24,31 +24,101 @@
     </script>
 
     <style>
-        body {
-            font-family: "Arial, Helvetica", sans-serif;
-            padding: 20px;
+        @page {
+            size: A4 landscape;
+            margin: 12mm 10mm 12mm 10mm;
         }
+
+        body {
+            font-family: 'Frutiger LT Std', 'Segoe UI', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            font-weight: 300;
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+        }
+
         table.inventory {
             width: 100%;
             border: 1px solid #d3d3d3;
+            border-collapse: collapse;
+            font-size: 10px;
         }
 
-        @page {
-            size: auto;
+        table.inventory th,
+        table.inventory td {
+            font-size: 11px;
+            vertical-align: top;
+            white-space: nowrap;
         }
-        
+
         .print-logo {
-            max-height: 40px;
+            max-height: 50px;
+            max-width: 180px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Frutiger LT Std', Arial, Helvetica, sans-serif !important;
+            font-weight: 300 !important;
+        }
+
+        h2, h3, h4 {
+            margin-top: 0;
         }
 
         h4 {
-            margin-top: 20px;
+            margin-top: 18px;
             margin-bottom: 10px;
         }
 
+        p {
+            margin: 6px 0 12px 0;
+        }
+
+        .page-header-block {
+            margin-bottom: 18px;
+        }
+
+        /* Each user starts on a new page, without a blank page after the last one */
+        .user-section + .user-section {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        .signature-boxes {
+            width: 100%;
+            margin-top: 45px;
+            border-collapse: collapse;
+        }
+
+        .signature-boxes td {
+            padding-right: 10px;
+            vertical-align: top;
+        }
+
+        .prefill-name,
+        .line-field,
+        .date-field {
+            border-bottom: 1px solid #000;
+            min-height: 18px;
+            display: inline-block;
+            width: 100%;
+            padding-bottom: 3px;
+        }
+
+        .prefill-name {
+            font-weight: bold;
+        }
+
         @media print {
-            .signature-boxes {
-                page-break-after: always;
+            .signature-boxes,
+            .eula-row,
+            tr, td, th {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .hidden-print {
+                display: none !important;
             }
         }
     </style>
@@ -72,6 +142,7 @@
 @endif
 
 @if ($snipeSettings->logo_print_assets=='1')
+    <div class="page-header-block">
     @if ($snipeSettings->brand == '3')
 
         <h2>
@@ -87,23 +158,31 @@
     @else
         <h2>{{ $snipeSettings->site_name }}</h2>
     @endif
+    </div>
 @endif
+
+{{-- The person printing the sheet signs it off as the manager --}}
+@php
+    $responsibleUserName = auth()->user()->display_name ?: auth()->user()->username ?: trans('general.unknown_user');
+@endphp
 
 @foreach ($users as $show_user)
     @php
         $count++;
+        $printedUserName = $show_user->display_name ?: $show_user->username ?: trans('general.unknown_user');
     @endphp
+    <div class="user-section">
     <div id="start_of_user_section"> {{-- used for page breaks when printing --}}</div>
     <h3>
         @if ($show_user->companies->isNotEmpty())
             <b>{{ trans('admin/companies/table.name') }}:</b> {{ $show_user->companies->pluck('name')->join(', ') }}
         <br>
         @endif
-        {{ trans('general.assigned_to', ['name' => $show_user->display_name]) }}
+        {{ trans('general.assigned_to', ['name' => $printedUserName]) }}
         {{ ($show_user->employee_num!='') ? ' (#'.$show_user->employee_num.') ' : '' }}
         {{ ($show_user->jobtitle!='' ? ' - '.$show_user->jobtitle : '') }}
     </h3>
-    <p></p>{{ trans('admin/users/general.all_assigned_list_generation')}} {{ Helper::getFormattedDateObject(now(), 'datetime', false) }}
+    <p>{{ trans('admin/users/general.all_assigned_list_generation')}} {{ Helper::getFormattedDateObject(now(), 'datetime', false) }}</p>
 
     @if ($canViewAssets)
     @if ($show_user->assets->count() > 0)
@@ -482,7 +561,7 @@
         </div>
     @endif
 
-    <table style="margin-top: 80px;" class="{{ count($users) > $count ? 'signature-boxes' : ''  }}">
+    <table class="signature-boxes">
         @if (!empty($eulas))
         <tr class="collapse eula-row">
             <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">EULA</td>
@@ -495,11 +574,11 @@
         @endif
         <tr>
             <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('general.signed_off_by') }}:</td>
-            <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-            <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-            <td>_____________</td>
+            <td style="padding-right: 10px; vertical-align: top;"><span class="prefill-name">{{ $printedUserName }}</span></td>
+            <td style="padding-right: 10px; vertical-align: top;"><span class="line-field">&nbsp;</span></td>
+            <td style="vertical-align: top;"><span class="date-field">&nbsp;</span></td>
         </tr>
-        <tr style="height: 80px;">
+        <tr style="height: 55px;">
             <td></td>
             <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.name') }}</td>
             <td style="padding-right: 10px; vertical-align: top;">{{ trans('general.signature') }}</td>
@@ -507,9 +586,9 @@
         </tr>
         <tr>
             <td style="padding-right: 10px; vertical-align: top; font-weight: bold;">{{ trans('admin/users/table.manager') }}:</td>
-            <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-            <td style="padding-right: 10px; vertical-align: top;">______________________________________</td>
-            <td>_____________</td>
+            <td style="padding-right: 10px; vertical-align: top;"><span class="prefill-name">{{ $responsibleUserName }}</span></td>
+            <td style="padding-right: 10px; vertical-align: top;"><span class="line-field">&nbsp;</span></td>
+            <td style="vertical-align: top;"><span class="date-field">&nbsp;</span></td>
         </tr>
         <tr>
             <td></td>
@@ -520,6 +599,7 @@
         </tr>
 
     </table>
+    </div>
 @endforeach
 
 {{-- Javascript files --}}

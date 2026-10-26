@@ -31,6 +31,20 @@ class PrintUserInventoryTest extends TestCase
             ->assertStatus(200);
     }
 
+    public function test_signature_boxes_are_prefilled_with_the_user_and_the_printing_user()
+    {
+        $actor = User::factory()->viewUsers()->create(['first_name' => 'Printing', 'last_name' => 'Manager']);
+        $subject = User::factory()->create(['first_name' => 'Signing', 'last_name' => 'Employee']);
+
+        $this->actingAs($actor)
+            ->get(route('users.print', $subject))
+            ->assertOk()
+            ->assertSeeInOrder([
+                '<span class="prefill-name">Signing Employee</span>',
+                '<span class="prefill-name">Printing Manager</span>',
+            ], false);
+    }
+
     public function test_cannot_print_user_inventory_from_another_company()
     {
         $this->settings->enableMultipleFullCompanySupport();
